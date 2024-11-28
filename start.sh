@@ -16,7 +16,7 @@ function stop_grass() {
 while true; do
     echo "Starting auto process..."
     auto
-    RANDOM_SLEEP=$((RANDOM % 60 * 10))
+    RANDOM_SLEEP=$((RANDOM % 360 * 10))
     sleep $RANDOM_SLEEP
     stop_grass
 done
