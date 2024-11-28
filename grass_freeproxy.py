@@ -73,7 +73,7 @@ async def connect_to_wss(socks5_proxy, user_id):
             updated_lines = [line for line in lines if line.strip() != proxy_to_remove]
             with open('auto_proxies.txt', 'w') as file:
                 file.writelines(updated_lines)
-            print(f"Proxy '{proxy_to_remove}' has been removed from the file.")
+            #print(f"Proxy '{proxy_to_remove}' has been removed from the file.")
 
 def fetch_proxies():
     """Fetches proxies from the API and saves them to 'auto_proxies.txt'."""
