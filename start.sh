@@ -8,6 +8,7 @@ function stop_grass() {
     if [ ! -z "$GRASS_PID" ]; then
         echo "Stopping grass_freeproxy.py with PID: $GRASS_PID"
         kill -9 $GRASS_PID
+        clear
     else
         echo "No grass_freeproxy.py process found to stop."
     fi
