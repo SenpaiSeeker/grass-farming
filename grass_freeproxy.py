@@ -2,6 +2,7 @@ import asyncio
 import random
 import ssl
 import json
+import aiohttp 
 import time
 import uuid
 import requests
@@ -67,35 +68,31 @@ async def connect_to_wss(socks5_proxy, user_id):
                         logger.debug(pong_response)
                         await websocket.send(json.dumps(pong_response))
         except Exception as e:
-            proxy_to_remove = socks5_proxy
-            with open('auto_proxies.txt', 'r') as file:
-                lines = file.readlines()
-            updated_lines = [line for line in lines if line.strip() != proxy_to_remove]
-            with open('auto_proxies.txt', 'w') as file:
-                file.writelines(updated_lines)
-            #print(f"Proxy '{proxy_to_remove}' has been removed from the file.")
+            pass
 
-def fetch_proxies():
-    """Fetches proxies from the API and saves them to 'auto_proxies.txt'."""
-    api_url = "https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=text"
+async def fetch_proxies(filename):
     try:
-        response = requests.get(api_url, stream=True)
-        if response.status_code == 200:
-            proxies = response.text.strip().splitlines()
-            if proxies:
-                with open('auto_proxies.txt', 'w') as f:
-                    f.writelines([proxy + '\n' for proxy in proxies])
-                print(f"Fetched and saved {len(proxies)} proxies to 'auto_proxies.txt'.")
-            else:
-                print("No proxies found from the API.")
-                return False
-        else:
-            print(f"Failed to fetch proxies. Status code: {response.status_code}")
-            return False
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=text") as response:
+                if response.status == 200:
+                    proxies = (await response.text()).strip().splitlines()
+                    logger.info(f"Fetched {len(proxies)} proxies from API.")
+                    save_proxies(filename, proxies)
+                else:
+                    logger.warning(f"Failed to fetch proxies. Status code: {response.status}")
+                    return []
     except Exception as e:
-        print(f"Error fetching proxies: {e}")
-        return False
-    return True
+        logger.error(f"Error fetching proxies: {e}")
+        return []
+
+
+def save_proxies(proxy_file, proxies):
+    try:
+        with open(proxy_file, "w") as file:
+            file.writelines([proxy + "\n" for proxy in proxies])
+        logger.info(f"Saved {len(proxies)} proxies to {proxy_file}.")
+    except Exception as e:
+        logger.error(f"Error saving proxies: {e}")
 
 def load_proxies(proxy_file):
     try:
@@ -109,7 +106,7 @@ async def main():
     with open('user_id.txt', 'r') as f:
         _user_id = f.read().strip()
 
-    fetch_proxies('auto_proxies.txt')
+    await fetch_proxies('auto_proxies.txt')
     auto_proxy_list = load_proxies('auto_proxies.txt')
 
     tasks = [asyncio.ensure_future(connect_to_wss(i, _user_id)) for i in auto_proxy_list]
