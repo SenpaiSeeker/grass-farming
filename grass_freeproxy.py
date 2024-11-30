@@ -68,8 +68,9 @@ async def connect_to_wss(socks5_proxy, user_id):
                         logger.debug(pong_response)
                         await websocket.send(json.dumps(pong_response))
         except Exception as e:
-            logger.warning(e)
-
+            all_proxies = load_proxies('auto_proxies.txt')
+            select_proxies = [x for x in all_proxies if x != socks5_proxy]
+            save_proxies('auto_proxies.txt', select_proxies)
 
 
 async def fetch_proxies(filename):
