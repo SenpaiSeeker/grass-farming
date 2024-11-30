@@ -97,33 +97,20 @@ def fetch_proxies():
         return False
     return True
 
+def load_proxies(proxy_file):
+    try:
+        with open(proxy_file, "r") as file:
+            return file.read().splitlines()
+    except Exception as e:
+        logger.error(f"Failed to load proxies: {e}")
+        raise SystemExit("Exiting due to failure in loading proxies")
+
 async def main():
-    try:
-        with open('user_id.txt', 'r') as f:
-            _user_id = f.read().strip()
-        if not _user_id:
-            print("No user ID found in 'user_id.txt'.")
-            return
-        print(f"User ID read from file: {_user_id}")
-    except FileNotFoundError:
-        print("Error: 'user_id.txt' file not found.")
-        return
+    with open('user_id.txt', 'r') as f:
+        _user_id = f.read().strip()
 
-    # Fetch and save proxies to 'auto_proxies.txt'
-    if not fetch_proxies():
-        print("No proxies available. Exiting script.")
-        return
-
-    try:
-        with open('auto_proxies.txt', 'r') as file:
-            auto_proxy_list = file.read().splitlines()
-            if not auto_proxy_list:
-                print("No proxies found in 'auto_proxies.txt'. Exiting script.")
-                return
-            print(f"Proxies read from file: {auto_proxy_list}")
-    except FileNotFoundError:
-        print("Error: 'auto_proxies.txt' file not found.")
-        return
+    fetch_proxies('auto_proxies.txt')
+    auto_proxy_list = load_proxies('auto_proxies.txt')
 
     tasks = [asyncio.ensure_future(connect_to_wss(i, _user_id)) for i in auto_proxy_list]
     await asyncio.gather(*tasks)
