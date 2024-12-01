@@ -17,6 +17,6 @@ function stop() {
 while true; do
     echo "Starting auto process..."
     auto
-    sleep $((RANDOM % 360 * 10 * 24))
+    sleep $((RANDOM % 360 * 10 * 8))
     stop
 done
