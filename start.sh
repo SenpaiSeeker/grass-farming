@@ -6,7 +6,7 @@ function auto() {
 
 function stop() {
     if [ ! -z "$PID" ]; then
-        echo "Stopping grass_freeproxy.py with PID: $PID"
+        echo "Stopping with PID: $PID"
         kill -9 $PID
         clear
     else
