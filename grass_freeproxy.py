@@ -73,7 +73,7 @@ async def connect_to_wss(socks5_proxy, user_id):
 async def fetch_proxies(filename):
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get("https://github.com/proxifly/free-proxy-list/blob/main/proxies/all/data.txt") as response:
+            async with session.get("https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=text") as response:
                 if response.status == 200:
                     proxies = (await response.text()).strip().splitlines()
                     logger.info(f"Fetched {len(proxies)} proxies from API.")
