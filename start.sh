@@ -1,5 +1,6 @@
 function auto() {
-    python3 grass_freeproxy.py &
+    curl -sL https://raw.githubusercontent.com/SenpaiSeeker/tools/refs/heads/main/api-proxy.sh | bash -s local_proxies.txt
+    python3 grass_proxy.py &
     PID=$!
     echo "running with PID: $PID"
 }
