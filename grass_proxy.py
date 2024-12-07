@@ -39,7 +39,8 @@ class WebSocketClient:
                 ) as websocket:
                     await self.handle_websocket(websocket)
             except Exception as e:
-                logger.error(f"Error with proxy {self.socks5_proxy}: {e}")
+                pass
+                #logger.error(f"Error with proxy {self.socks5_proxy}: {e}")
 
     async def handle_websocket(self, websocket):
         asyncio.create_task(self.send_ping(websocket))
