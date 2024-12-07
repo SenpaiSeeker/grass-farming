@@ -68,8 +68,8 @@ class WebSocketClient:
                     logger.debug(f"Pong response sent: {pong_response}")
 
             except Exception as e:
-                logger.error(f"Error processing message: {e}")
-                break
+                pass
+                # logger.error(f"Error processing message: {e}")
 
     async def connect(self):
         proxy = Proxy.from_url(self.proxy_url)
@@ -79,13 +79,7 @@ class WebSocketClient:
         while True:
             try:
                 await asyncio.sleep(random.uniform(0.1, 1))
-                async with proxy_connect(
-                    uri, 
-                    proxy=proxy, 
-                    ssl=self.ssl_context,
-                    server_hostname=self.server_hostname, 
-                    extra_headers=headers
-                ) as websocket:
+                async with proxy_connect(uri, proxy=proxy, ssl=self.ssl_context, server_hostname=self.server_hostname, extra_headers=headers) as websocket:
                     logger.info(f"Connected to {uri} via {self.proxy_url}")
                     asyncio.create_task(self._send_ping(websocket))
                     await self._handle_message(websocket)
