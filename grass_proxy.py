@@ -86,7 +86,7 @@ class WebSocketClient:
 
 
 class ProxyManager:
-    def load_file(file_name, data_type):
+    def load_file(self, file_name, data_type):
         try:
             with open(file_name, 'r') as file:
                 data = file.read().splitlines()
